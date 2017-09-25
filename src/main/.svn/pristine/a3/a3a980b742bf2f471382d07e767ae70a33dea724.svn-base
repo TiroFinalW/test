@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.PeachRecordMapper">
+<resultMap id="resultMap" type="com.jielan.model.PeachRecord">
+    <result property="id" column="id" jdbcType="INTEGER" />
+    <result property="openid" column="openid" jdbcType="VARCHAR" />
+    <result property="type" column="recordtype" jdbcType="INTEGER" />
+    <result property="way" column="way" jdbcType="INTEGER" />
+    <result property="peach" column="peach" jdbcType="DOUBLE" />
+    <result property="goods" column="goods" jdbcType="VARCHAR" />
+    <result property="goodsnum" column="goodsnum" jdbcType="INTEGER" />
+    <result property="remainCard" column="remaincard" jdbcType="INTEGER" />
+    <result property="prize" column="prize" jdbcType="VARCHAR" />
+    <result property="remainPeach" column="remainpeach" jdbcType="DOUBLE" />
+    <result property="exchangeDate" column="exchangeDate" jdbcType="TIMESTAMP" />
+
+</resultMap>
+    <sql id="basesql">
+       id,openid,recordtype,way,peach,goods,goodsnum,remaincard,prize,remainpeach,exchangeDate
+    </sql>
+        <!--按条件查询-->
+    <select id="selectPeachRecord" parameterType="com.jielan.model.query.PeachRecordQuery" resultMap="resultMap">
+        select <include refid="basesql"/>
+        from tb_hz_sign_peachrecord where 1=1
+            <if test="openid!=null and openid!=''">
+                and openid=#{openid,jdbcType=VARCHAR}
+            </if>
+            <if test="type!=null">
+              and recordtype=#{type,jdbcType=INTEGER}
+            </if>
+            <if test="way!=null">
+                and way=#{way,jdbcType=INTEGER}
+            </if>
+            <if test="startTime!=null">
+                and exchangeDate &gt;= #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime!=null">
+                and exchangeDate &lt;= #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        <if test="orderby!=null and orderby!=''">
+            order by ${orderby}
+        </if>
+
+    </select>
+    <insert id="addPeachRecord" parameterType="com.jielan.model.PeachRecord">
+        insert into tb_hz_sign_peachrecord (openid,recordtype,way,peach,goods,goodsnum,remaincard,prize,remainpeach,exchangeDate)
+        values (#{openid,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},#{way,jdbcType=INTEGER},#{peach,jdbcType=INTEGER},#{goods,jdbcType=VARCHAR},#{goodsnum,jdbcType=INTEGER},#{remainCard,jdbcType=INTEGER},#{prize,jdbcType=VARCHAR},#{remainPeach,jdbcType=INTEGER},now())
+    </insert>
+</mapper>

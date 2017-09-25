@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.MyGoodsMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.MyGoods">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="openid" column="openid" jdbcType="VARCHAR" />
+        <result property="phone" column="phone" jdbcType="VARCHAR" />
+        <result property="goodsname" column="goodsname" jdbcType="VARCHAR" />
+        <result property="goodsnum" column="goodsnum" jdbcType="INTEGER" />
+        <result property="goodsid" column="goodsid" jdbcType="INTEGER" />
+        <result property="gettype" column="gettype" jdbcType="INTEGER" />
+        <result property="costpeach" column="costpeach" jdbcType="DOUBLE" />
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <select id="selectMyGoods" parameterType="com.jielan.model.query.MyGoodsQuery" resultMap="ResultMap" >
+    select a.id,a.openid,b.phone,a.goodsname,a.goodsnum,a.gettype,a.costpeach,a.createTime
+    from tb_hz_sign_mygoods a left join tb_hz_sign_user b on a.openid=b.openid WHERE 1=1
+    <if test="openid!=null and openid!=''">
+    and a.openid=#{openid,jdbcType=VARCHAR}
+    </if>
+     <if test="phone!=null and phone!=''">
+         and b.phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="startTime!=null ">
+         and a.createTime &gt;=#{startTime,jdbcType=TIMESTAMP}
+    </if>
+    <if test="endTime!=null ">
+        and a.createTime &lt;=#{endTime,jdbcType=TIMESTAMP}
+    </if>
+    order by a.createTime desc
+        limit #{pagestart},#{pagesize}
+    </select>
+
+    <select id="countMyGoods" parameterType="com.jielan.model.query.MyGoodsQuery" resultType="java.lang.Integer" >
+        select count(*)
+        from tb_hz_sign_mygoods a left join tb_hz_sign_user b on a.openid=b.openid WHERE 1=1
+        <if test="openid!=null and openid!=''">
+            and a.openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="phone!=null and phone!=''">
+            and b.phone=#{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null ">
+            and a.createTime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null ">
+            and a.createTime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+
+    <select id="selectMyGoodsByOpenid" parameterType="java.lang.String" resultMap="ResultMap" >
+    select a.id,a.openid,b.phone,a.goodsname,a.goodsnum,a.gettype,a.costpeach,a.createTime
+    from tb_hz_sign_mygoods a left join tb_hz_sign_user b on a.openid=b.openid WHERE a.openid=#{openid,jdbcType=VARCHAR} order by a.createTime desc
+    </select>
+
+    <insert id="addMyGoods" parameterType="com.jielan.model.MyGoods">
+        insert into tb_hz_sign_mygoods (openid,goodsname,goodsnum,gettype,costpeach,createTime,goodsid) values
+        (#{openid,jdbcType=VARCHAR},#{goodsname,jdbcType=VARCHAR},#{goodsnum,jdbcType=INTEGER},#{gettype,jdbcType=INTEGER},#{costpeach,jdbcType=DOUBLE},now(),#{goodsid,jdbcType=INTEGER})
+    </insert>
+
+    <select id="exportMyGoods" parameterType="com.jielan.model.query.MyGoodsQuery" resultMap="ResultMap" >
+        select a.id,a.openid,b.phone,a.goodsname,a.goodsnum,a.gettype,a.costpeach,a.createTime
+        from tb_hz_sign_mygoods a left join tb_hz_sign_user b on a.openid=b.openid WHERE 1=1
+        <if test="openid!=null and openid!=''">
+            and a.openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="phone!=null and phone!=''">
+            and b.phone=#{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null ">
+            and a.createTime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null ">
+            and a.createTime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+        order by a.createTime desc
+    </select>
+
+    <select id="countExchange" parameterType="com.jielan.model.query.MyGoodsQuery" resultType="java.lang.Integer" >
+        select ifnull(sum(goodsnum),0)
+        from tb_hz_sign_mygoods  WHERE 1=1
+        <if test="openid!=null and openid!=''">
+            and openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="goodsid!=null and goodsid>=0">
+            and goodsid=#{goodsid,jdbcType=INTEGER}
+        </if>
+        <if test="gettype!=null and gettype>=0">
+            and gettype=#{gettype,jdbcType=INTEGER}
+        </if>
+        <if test="startTime!=null ">
+            and createTime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null ">
+            and createTime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+
+    <select id="countMyGoodsTime" parameterType="com.jielan.model.query.MyGoodsQuery" resultType="java.lang.Integer" >
+        select count(*) from tb_hz_sign_mygoods  WHERE 1=1
+        <if test="openid!=null and openid!=''">
+            and openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="gettype!=null and gettype>=0">
+            and gettype=#{gettype,jdbcType=VARCHAR}
+        </if>
+        <if test="goodsname!=null and goodsname!=''">
+            and goodsname=#{goodsname,jdbcType=VARCHAR}
+        </if>
+        <if test="goodsid!=null and goodsid>=0">
+            and goodsid=#{goodsid,jdbcType=INTEGER}
+        </if>
+        <if test="startTime!=null ">
+            and createTime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null ">
+            and createTime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+    </select>
+</mapper>

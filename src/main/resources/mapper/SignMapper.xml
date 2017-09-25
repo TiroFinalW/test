@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.SignMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.SignRecord">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="openid" column="openid" jdbcType="VARCHAR" />
+        <result property="type" column="signtype" jdbcType="INTEGER" />
+        <result property="peach" column="peach" jdbcType="DOUBLE" />
+        <result property="signtime" column="signtime" jdbcType="TIMESTAMP" />
+
+        <result property="phone" column="phone" jdbcType="VARCHAR" /> <!--关联查询用字段-->
+
+    </resultMap>
+    <insert id="addSignRecord" parameterType="com.jielan.model.SignRecord">
+      insert into tb_hz_sign_signrecord (openid,signtype,peach,signtime) VALUES
+      (#{openid,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},#{peach,jdbcType=DOUBLE},now())
+    </insert>
+    <insert id="addRetroactive" parameterType="com.jielan.model.SignRecord">
+        insert into tb_hz_sign_signrecord (openid,signtype,peach,signtime) VALUES
+        (#{openid,jdbcType=VARCHAR},#{type,jdbcType=INTEGER},#{peach,jdbcType=DOUBLE},#{signtime,jdbcType=TIMESTAMP})
+    </insert>
+    <select id="selectUserSignRecord" parameterType="java.lang.String" resultMap="ResultMap">
+      select  id,openid,signtype,peach,signtime from tb_hz_sign_signrecord where openid=#{openid,jdbcType=VARCHAR}
+    </select>
+    <select id="selectSignRecord" parameterType="com.jielan.model.query.SignRecordQuery" resultMap="ResultMap">
+        select  id,openid,signtype,peach,signtime from tb_hz_sign_signrecord where 1=1
+        <if test="openid!=null and openid!=''">
+        and openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="type!=null and type>=0">
+            and signtype=#{type,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null">
+            and signtime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null">
+            and signtime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="orderby!=null and orderby!=''">
+            order by ${orderby}
+        </if>
+    </select>
+    <select id="selectSignRecordPage" parameterType="com.jielan.model.query.SignRecordQuery" resultMap="ResultMap">
+        select  a.id,a.openid,b.phone,a.signtype,a.peach,a.signtime from tb_hz_sign_signrecord a left join tb_hz_sign_user b on a.openid=b.openid where 1=1
+        <if test="openid!=null and openid!=''">
+            and a.openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="type!=null and type>=0">
+            and a.signtype=#{type,jdbcType=VARCHAR}
+        </if>
+        <if test="phone!=null and phone!=''">
+            and b.phone=#{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null">
+            and a.signtime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null">
+            and a.signtime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="orderby!=null and orderby!=''">
+            order by ${orderby}
+        </if>
+        limit #{pagestart},#{pagesize}
+    </select>
+    <select id="countSignRecord" parameterType="com.jielan.model.query.SignRecordQuery" resultType="java.lang.Integer">
+        select count(*) from tb_hz_sign_signrecord  a left join tb_hz_sign_user b on a.openid=b.openid where 1=1
+        <if test="openid!=null and openid!=''">
+            and a.openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="type!=null and type>=0">
+            and a.signtype=#{type,jdbcType=VARCHAR}
+        </if>
+        <if test="phone!=null and phone!=''">
+            and b.phone=#{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null">
+            and a.signtime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null">
+            and a.signtime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+     </select>
+    <select id="exportSignRecord" parameterType="com.jielan.model.query.SignRecordQuery" resultMap="ResultMap">
+        select  a.id,a.openid,b.phone,a.signtype,a.peach,a.signtime from tb_hz_sign_signrecord a left join tb_hz_sign_user b on a.openid=b.openid where 1=1
+        <if test="openid!=null and openid!=''">
+            and a.openid=#{openid,jdbcType=VARCHAR}
+        </if>
+        <if test="type!=null and type>=0">
+            and a.signtype=#{type,jdbcType=VARCHAR}
+        </if>
+        <if test="phone!=null and phone!=''">
+            and b.phone=#{phone,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime!=null">
+            and a.signtime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endTime!=null">
+            and a.signtime &lt;=#{endTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="orderby!=null and orderby!=''">
+            order by ${orderby}
+        </if>
+
+    </select>
+</mapper>

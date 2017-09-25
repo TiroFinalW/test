@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.CheckPwdMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.CheckPwd">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="openid" column="openid" jdbcType="VARCHAR" />
+        <result property="password" column="password" jdbcType="VARCHAR" />
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <select id="selectCheckPwd" parameterType="com.jielan.model.query.CheckPwdQuery" resultMap="ResultMap">
+        select id,openid,password,createTime from tb_hz_sign_checkpwd
+        where 1=1
+        <if test="startTime!=null ">
+            and createTime &gt;=#{startTime,jdbcType=TIMESTAMP}
+        </if>
+            <if test="endTime!=null ">
+                and createTime &lt;=#{endTime,jdbcType=TIMESTAMP}
+            </if>
+         <if test="password!=null and password!=''">
+             and password =#{password,jdbcType=VARCHAR}
+       </if>
+        <if test="openid!=null and openid!=''">
+             and openid =#{openid,jdbcType=VARCHAR}
+        </if>
+    </select>
+    <insert id="addCheckPwd" parameterType="com.jielan.model.PassWord">
+        insert into tb_hz_sign_checkpwd (openid,password,createTime) values (#{openid,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP})
+    </insert>
+</mapper>

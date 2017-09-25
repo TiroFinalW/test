@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.GoodsMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.Goods">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="name" column="goodsname" jdbcType="VARCHAR" />
+        <result property="image" column="image" jdbcType="VARCHAR" />
+        <result property="value" column="goodsvalue" jdbcType="INTEGER" />
+        <result property="price" column="price" jdbcType="DOUBLE" />
+        <result property="type" column="goodstype" jdbcType="INTEGER" />
+        <result property="sort" column="sort" jdbcType="INTEGER" />
+        <result property="rule" column="rule" jdbcType="VARCHAR" />
+        <result property="number" column="goodsnumber" jdbcType="INTEGER" />
+        <result property="status" column="status" jdbcType="INTEGER" />
+        <result property="createTime" column="createtime" jdbcType="TIMESTAMP" />
+        <result property="shop" column="shop" jdbcType="VARCHAR" />
+        <result property="exchangecount" column="exchangecount" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="basesql">
+        id,goodsname,image,goodsvalue,price,goodstype,sort,rule,goodsnumber,status,createTime,shop,exchangecount
+    </sql>
+
+    <select id="selectGoods" parameterType="com.jielan.model.query.GoodsQuery" resultMap="ResultMap" >
+        select <include refid="basesql"/>
+        from tb_hz_sign_goods limit #{pagestart},#{pagesize}
+    </select>
+    <select id="countGoods" parameterType="com.jielan.model.query.GoodsQuery" resultType="java.lang.Integer" >
+        select count(*)
+        from tb_hz_sign_goods
+    </select>
+
+    <insert id="addGoods" parameterType="com.jielan.model.Goods">
+        insert into tb_hz_sign_goods (goodsname,image,goodsvalue,price,goodstype,sort,rule,goodsnumber,status,createTime,shop,exchangecount) values
+        (#{name,jdbcType=VARCHAR},#{image,jdbcType=VARCHAR},#{value,jdbcType=INTEGER},#{price,jdbcType=DOUBLE}
+        ,#{type,jdbcType=INTEGER},#{sort,jdbcType=INTEGER},#{rule,jdbcType=VARCHAR},#{number,jdbcType=INTEGER},#{status,jdbcType=INTEGER},now(),#{shop,jdbcType=VARCHAR},#{exchangecount,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateGoods" parameterType="com.jielan.model.Goods">
+        update tb_hz_sign_goods set
+        <trim prefixOverrides=",">
+            <if test="name!=null and name!=''">
+                ,goodsname=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test="image!=null and image!=''">
+                ,image=#{image,jdbcType=VARCHAR}
+            </if>
+            <if test="value!=null and value>=0">
+                ,goodsvalue=#{value,jdbcType=INTEGER}
+            </if>
+            <if test="price!=null and price>=0">
+                ,price=#{price,jdbcType=DOUBLE}
+            </if>
+            <if test="type!=null and type>=0">
+                ,goodstype=#{type,jdbcType=INTEGER}
+            </if>
+            <if test="sort!=null and sort>=0">
+                ,sort=#{sort,jdbcType=INTEGER}
+            </if>
+            <if test="rule!=null and rule!=''">
+                ,rule=#{rule,jdbcType=VARCHAR}
+            </if>
+            <if test="number!=null and number>=0">
+                ,goodsnumber=#{number,jdbcType=INTEGER}
+            </if>
+            <if test="status!=null and status>=0">
+                ,status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test="shop!=null and shop!=null">
+                ,shop=#{shop,jdbcType=VARCHAR}
+            </if>
+            <if test="exchangecount!=null and exchangecount>=0">
+                ,exchangecount=#{exchangecount,jdbcType=INTEGER}
+            </if>
+        </trim>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="ResultMap">
+        select <include refid="basesql"/> from tb_hz_sign_goods where id=#{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteGoods" parameterType="java.lang.Integer">
+        delete from tb_hz_sign_goods where id=#{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

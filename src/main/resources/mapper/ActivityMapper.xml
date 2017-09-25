@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.ActivityMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.Activity">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="name" column="actname" jdbcType="VARCHAR" />
+        <result property="imgurl" column="imgurl" jdbcType="VARCHAR" />
+        <result property="activityurl" column="activityurl" jdbcType="VARCHAR" />
+        <result property="status" column="status" jdbcType="INTEGER" />
+        <result property="createTime" column="createtime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="basesql">
+        id,actname,imgurl,activityurl,status,createtime
+    </sql>
+
+    <select id="selectActivity" parameterType="com.jielan.model.query.ActivityQuery" resultMap="ResultMap" >
+        select <include refid="basesql"/>
+        from tb_hz_sign_activity where 1=1
+        <if test="status!=null and status>=0">
+          and status=#{status,jdbcType=INTEGER}
+        </if>
+        limit #{pagestart},#{pagesize}
+    </select>
+    <select id="countActivity" parameterType="com.jielan.model.query.ActivityQuery" resultType="java.lang.Integer" >
+        select count(*)
+        from tb_hz_sign_activity where 1=1
+        <if test="status!=null and status>=0">
+            and  status=#{status,jdbcType=INTEGER}
+        </if>
+    </select>
+
+    <insert id="addActivity" parameterType="com.jielan.model.Activity">
+        insert into tb_hz_sign_activity (actname,imgurl,activityurl,status,createtime) values
+        (#{name,jdbcType=VARCHAR},#{imgurl,jdbcType=VARCHAR},#{activityurl,jdbcType=VARCHAR},#{status,jdbcType=INTEGER},now())
+    </insert>
+
+    <update id="updateActivity" parameterType="com.jielan.model.Activity">
+        update tb_hz_sign_activity set
+        <trim prefixOverrides=",">
+            <if test="name!=null and name!=''">
+                ,actname=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test="imgurl!=null and imgurl!=''">
+                ,imgurl=#{imgurl,jdbcType=VARCHAR}
+            </if>
+            <if test="activityurl!=null and activityurl!=''">
+                ,activityurl=#{activityurl,jdbcType=VARCHAR}
+            </if>
+            <if test="status!=null">
+                ,status=#{status,jdbcType=INTEGER}
+            </if>
+        </trim>
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="ResultMap">
+      select <include refid="basesql"/> from tb_hz_sign_activity where id=#{id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteActivity" parameterType="java.lang.Integer">
+        delete from tb_hz_sign_activity where id=#{id,jdbcType=INTEGER}
+    </delete>
+</mapper>

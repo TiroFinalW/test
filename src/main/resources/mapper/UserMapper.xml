@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.UserMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.User">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="openid" column="openid" jdbcType="VARCHAR" />
+        <result property="wx_image" column="wx_image" jdbcType="VARCHAR" />
+        <result property="wx_name" column="wx_name" jdbcType="VARCHAR" />
+        <result property="status" column="status" jdbcType="INTEGER" />
+        <result property="sigin_count" column="sigin_count" jdbcType="INTEGER" />
+        <result property="peach" column="peach" jdbcType="DOUBLE" />
+        <result property="retroactiveCard" column="retroactiveCard" jdbcType="INTEGER" />
+        <result property="createDate" column="createDate" jdbcType="TIMESTAMP" />
+        <result property="signoffDate" column="signoffDate" jdbcType="TIMESTAMP" />
+        <result property="siginDate" column="siginDate" jdbcType="TIMESTAMP" />
+        <result property="nextpeach" column="nextpeach" jdbcType="DOUBLE" />
+    </resultMap>
+    <sql id="basesql">
+        id,openid,phone,wx_image,wx_name,createDate,siginDate,sigin_count,peach,retroactiveCard,signoffDate,nextpeach
+    </sql>
+    <insert id="addUser" parameterType="com.jielan.model.User">
+        insert into tb_hz_sign_user (openid,phone,wx_image,wx_name,createDate,siginDate,sigin_count,peach,retroactiveCard,signoffDate,nextpeach)
+        values (#{openid,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{wx_image,jdbcType=VARCHAR}
+        ,#{wx_name,jdbcType=VARCHAR},now(),null,0,0,0,null,1);
+    </insert>
+    <select id="selectByOpenid" parameterType="String" resultMap="ResultMap">
+        select <include refid="basesql"/>
+        from tb_hz_sign_user where openid=#{openid,jdbcType=VARCHAR}
+    </select>
+    <update id="updateUser" parameterType="com.jielan.model.User">
+        update tb_hz_sign_user SET
+        <trim prefixOverrides=",">
+            <if test="phone!=null and phone!=''">
+                ,phone=#{phone,jdbcType=VARCHAR}
+            </if>
+            <if test="siginDate!=null">
+                ,siginDate=#{siginDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="sigin_count!=null and sigin_count>=0">
+                ,sigin_count=#{sigin_count,jdbcType=INTEGER}
+            </if>
+            <if test="peach!=null and peach>=0">
+                ,peach=#{peach,jdbcType=DOUBLE}
+            </if>
+            <if test="retroactiveCard!=null and retroactiveCard>=0">
+                ,retroactiveCard=#{retroactiveCard,jdbcType=INTEGER}
+            </if>
+            <if test="signoffDate!=null">
+            ,signoffDate=#{siginDate,jdbcType=TIMESTAMP}
+             </if>
+            <if test="nextpeach!=null and nextpeach>=0">
+                ,nextpeach=#{nextpeach,jdbcType=DOUBLE}
+            </if>
+            where openid=#{openid,jdbcType=VARCHAR}
+        </trim>
+
+    </update>
+    <update id="clearPeach">
+      update tb_hz_sign_user SET peach=0.0
+    </update>
+</mapper>

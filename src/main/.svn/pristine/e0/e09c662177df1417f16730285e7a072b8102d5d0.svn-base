@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jielan.dao.PassWordMapper">
+    <resultMap id="ResultMap" type="com.jielan.model.PassWord">
+        <result property="id" column="id" jdbcType="INTEGER" />
+        <result property="password" column="password" jdbcType="VARCHAR" />
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP" />
+        <result property="deadTime" column="deadTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <select id="selectPassWord" parameterType="com.jielan.model.query.PassWordQuery" resultMap="ResultMap">
+        select * from tb_hz_sign_password
+        where 1=1
+          <if test="today!=null ">
+          and createTime &lt;= #{today,jdbcType=TIMESTAMP} and deadTime &gt;=#{today,jdbcType=TIMESTAMP}
+          </if>
+          order by createTime desc limit #{pagestart},#{pagesize}
+    </select>
+    <select id="countPassWord" parameterType="com.jielan.model.query.PassWordQuery" resultType="java.lang.Integer">
+        select count(*) from tb_hz_sign_password
+        where 1=1
+        <if test="today!=null ">
+            and createTime &lt;= #{today,jdbcType=TIMESTAMP} and deadTime &gt;=#{today,jdbcType=TIMESTAMP}
+        </if>
+        order by createTime desc
+    </select>
+    <insert id="addPassWord" parameterType="com.jielan.model.PassWord">
+      insert into tb_hz_sign_password (password,createTime,deadTime) values (#{password,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{deadTime,jdbcType=TIMESTAMP})
+    </insert>
+ </mapper>
